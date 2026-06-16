@@ -1,0 +1,362 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://example.com/schema",
+    "type": "object",
+    "$defs": {
+        "roleAssignment": {
+            "type": "object",
+            "required": [
+                "roleDefinitionName",
+                "principalId"
+            ],
+            "properties": {
+                "roleDefinitionName": {
+                    "type": "string"
+                },
+                "principalId": {
+                    "type": "string",
+                    "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$",
+                    "errorMessage": "principalId must be a valid Azure Object ID (UUID format)."
+                },
+                "condition": {
+                    "type": "string",
+                    "description": "Condition expression under which the identity can be granted permission",
+                    "minLength": 1
+                },
+                "condition_version": {
+                    "type": "string",
+                    "description": "The version of the condition.Defaults to 2.0",
+                    "pattern": "^[1-9].0$",
+                    "minLength": 1,
+                    "errorMessage": "condition_version must match supported version from Microsoft. e.g: 1.0 , 2.0"
+                }
+            },
+            "errorMessage": {
+                "required": {
+                    "roleDefinitionName": "roleDefinitionName is required.",
+                    "principalId": "principalId is required."
+                }
+            }
+        },
+        "resourceProviders": {
+            "type": "object",
+            "propertyNames": {
+                "type": "string",
+                "pattern": "^[A-Za-z]+\\.[A-Za-z0-9]+$",
+                "errorMessage": "Invalid resourceProviders. Each key in resourceProviders must be a valid Azure provider namespace (e.g., Microsoft.Compute)."
+            },
+            "additionalProperties": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                },
+                "errorMessage": "Each value in resourceProviders must be an array of features (strings), or an empty array to register the provider without features."
+            }
+        },
+        "userGroups": {
+            "items": {
+                "type": "object",
+                "required": [
+                    "name",
+                    "description",
+                    "roleAssignments"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "owners": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "pattern": "^[^@\\s]+@gsk\\.com$",
+                            "errorMessage": "Each owner must be a valid gsk email ID."
+                        }
+                    },
+                    "groupOwners": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "servicePrincipalOwners": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9.-]+$",
+                            "errorMessage": "Each servicePrincipalOwner must be a valid Azure service principal name (alphanumeric with optional dot, dash, or underscore)."
+                        }
+                    },
+                    "members": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "pattern": "^[^@\\s]+@gsk\\.com$",
+                            "errorMessage": "Each member must be a valid gsk email ID."
+                        }
+                    },
+                    "groupMembers": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "servicePrincipalMembers": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9.-]+$",
+                            "errorMessage": "Each servicePrincipalMember must be a valid Azure service principal name (alphanumeric with optional dot, dash, or underscore)."
+                        }
+                    },
+                    "roleAssignments": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "roleDefinitionName"
+                            ],
+                            "properties": {
+                                "roleDefinitionName": {
+                                    "type": "string"
+                                },
+                                "condition": {
+                                    "type": "string",
+                                    "description": "Condition expression under which the identity can be granted permission",
+                                    "minLength": 1
+                                },
+                                "condition_version": {
+                                    "type": "string",
+                                    "description": "The version of the condition.Defaults to 2.0",
+                                    "pattern": "^[1-9].0$",
+                                    "minLength": 1,
+                                    "errorMessage": "condition_version must match supported version from Microsoft. e.g: 1.0 , 2.0"
+                                }
+                            },
+                            "errorMessage": {
+                                "required": {
+                                    "roleDefinitionName": "roleDefinitionName is required in userGroup roleAssignments."
+                                }
+                            }
+                        }
+                    }
+                },
+                "anyOf": [
+                    {
+                        "required": [
+                            "owners"
+                        ]
+                    },
+                    {
+                        "required": [
+                            "servicePrincipalOwners"
+                        ]
+                    }
+                ],
+                "errorMessage": "Each userGroup block must have either 'owners' or 'servicePrincipalOwners' defined."
+            }
+        }
+    },
+    "properties": {
+        "subscriptions": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": [
+                    "location",
+                    "subscriptionName",
+                    "subscriptionAliasName",
+                    "managementGroupName"
+                ],
+                "properties": {
+                    "subscriptionId": {
+                        "anyOf": [
+                            {
+                                "type": "null"
+                            },
+                            {
+                                "type": "string",
+                                "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$"
+                            }
+                        ],
+                        "errorMessage": "subscriptionId must be either null or a valid Azure subscription UUID."
+                    },
+                    "location": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "subscriptionName": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "subscriptionAliasName": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "managementGroupName": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "resourceGroups": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": [
+                                "name",
+                                "location"
+                            ],
+                            "anyOf": [
+                                {
+                                    "required": [
+                                        "tagsRef"
+                                    ]
+                                },
+                                {
+                                    "required": [
+                                        "tags"
+                                    ]
+                                }
+                            ],
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "pattern": "^(?![-0-9])[a-zA-Z0-9-]+(?<!-)$",
+                                    "errorMessage": "Resource group name must be alphanumeric or hyphens, cannot start with a number or hyphen, and cannot end with a hyphen."
+                                },
+                                "location": {
+                                    "type": "string",
+                                    "minLength": 1
+                                },
+                                "tagsRef": {
+                                    "type": "string",
+                                    "pattern": "^[^\\s]+#tags(\\.[a-zA-Z0-9_-]+)?$",
+                                    "errorMessage": "tagsRef must follow the pattern 'filepath#tags' or 'filepath#tags.'"
+                                },
+                                "tags": {
+                                    "type": "object",
+                                    "properties": {
+                                        "ApplicationName": {
+                                            "type": "string"
+                                        },
+                                        "Environment": {
+                                            "type": "string"
+                                        },
+                                        "ParentCIID": {
+                                            "type": "string"
+                                        },
+                                        "BusinessOwner": {
+                                            "type": "string"
+                                        },
+                                        "TechnicalOwner": {
+                                            "type": "string"
+                                        },
+                                        "LineOfBusiness": {
+                                            "type": "string"
+                                        },
+                                        "BusinessUnit": {
+                                            "type": "string"
+                                        },
+                                        "BusinessFunction": {
+                                            "type": "string"
+                                        },
+                                        "Chargeback": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "additionalProperties": {
+                                        "type": "string"
+                                    }
+                                },
+                                "roleAssignmentRef": {
+                                    "type": "string",
+                                    "pattern": "^[^\\s]+#(roleAssignments(\\.[a-zA-Z0-9_-]+)?|[a-zA-Z0-9_-]+)$",
+                                    "errorMessage": "roleAssignmentRef must follow the pattern 'filepath#roleAssignments', 'filepath#roleAssignments.', or 'filepath#'."
+                                },
+                                "roleAssignments": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/$defs/roleAssignment"
+                                    }
+                                },
+                                "userGroups": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/$defs/userGroups"
+                                    }
+                                },
+                                "arcGateways": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "required": [
+                                            "name"
+                                        ],
+                                        "properties": {
+                                            "name": {
+                                                "type": "string",
+                                                "minLength": 2,
+                                                "pattern": "^(?![.-])[A-Za-z0-9.-]+(?<![.-])$",
+                                                "errorMessage": "Gateway name should be minimum of 2 characters and can only contain alphanumeric characters, "-", ".", and ""; and cannot begin with "",".","-" or end with "." or "-""
+                                            },
+                                            "gateway_type": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "public"
+                                                ],
+                                                "errorMessage": "gateway_type must be 'public'."
+                                            },
+                                            "tags": {
+                                                "type": "object",
+                                                "additionalProperties": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        },
+                                        "errorMessage": {
+                                            "required": {
+                                                "name": "Missing required field under arcGateways block.Arc gateway name is required."
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "errorMessage": {
+                                "required": {
+                                    "name": "name is required under resourceGroups block",
+                                    "location": "location is required under resourceGroups block"
+                                },
+                                "anyOf": "Missing required field under resourceGroups block. Either 'tagsRef' (to reference external tag definitions) or 'tags' (for direct tag definitions) must be provided. You cannot have a resource group without tag information."
+                            }
+                        }
+                    },
+                    "roleAssignments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/$defs/roleAssignment"
+                        }
+                    },
+                    "userGroups": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/$defs/userGroups"
+                        }
+                    },
+                    "resourceProviders": {
+                        "$ref": "#/$defs/resourceProviders"
+                    }
+                },
+                "errorMessage": "Missing required field for Subscription. "location", "subscriptionName", "subscriptionAliasName", "managementGroupName" are required field for Subscription"
+            }
+        },
+        "resourceProviders": {
+            "$ref": "#/$defs/resourceProviders"
+        }
+    },
+    "required": [
+        "subscriptions"
+    ],
+    "errorMessage": "subscriptions is a required top-level property."
+}
