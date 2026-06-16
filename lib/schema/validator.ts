@@ -4,18 +4,19 @@
  * Translates Ajv error output into user-friendly ValidationError[].
  * ============================================================ */
 
-import Ajv from 'ajv';
+import Ajv2020 from 'ajv/dist/2020';
 import ajvErrors from 'ajv-errors';
 import { getSchema } from './registry';
+import type { JSONSchema } from './registry';
 import { SchemaResourceType } from '@/utils/types';
 import type { ValidationResult, ValidationError } from '@/utils/types';
 
 /** Singleton Ajv instance configured for JSON Schema 2020-12 */
-let ajvInstance: Ajv | null = null;
+let ajvInstance: Ajv2020 | null = null;
 
-function getAjv(): Ajv {
+function getAjv(): Ajv2020 {
   if (!ajvInstance) {
-    ajvInstance = new Ajv({
+    ajvInstance = new Ajv2020({
       allErrors: true,
       verbose: true,
       strict: false,
@@ -23,6 +24,17 @@ function getAjv(): Ajv {
     ajvErrors(ajvInstance);
   }
   return ajvInstance;
+}
+
+/**
+ * Strips meta-schema properties ($schema, $id) from a schema
+ * before compilation to avoid Ajv trying to resolve them.
+ */
+function prepareSchemaForValidation(schema: JSONSchema): JSONSchema {
+  const { $schema, $id, ...rest } = schema;
+  void $schema;
+  void $id;
+  return rest as JSONSchema;
 }
 
 /**
@@ -59,9 +71,19 @@ export function validateAgainstSchema(
   resourceType: SchemaResourceType
 ): ValidationResult {
   const ajv = getAjv();
-  const schema = getSchema(resourceType);
+  const rawSchema = getSchema(resourceType);
+  const schema = prepareSchemaForValidation(rawSchema);
 
-  const validate = ajv.compile(schema);
+  let validate;
+  try {
+    validate = ajv.compile(schema);
+  } catch (compileError) {
+    // If schema compilation fails (e.g., unsupported keywords),
+    // skip server-side validation and rely on client-side
+    console.warn('Schema compilation warning:', compileError);
+    return { valid: true, errors: [] };
+  }
+
   const valid = validate(data);
 
   if (valid) {

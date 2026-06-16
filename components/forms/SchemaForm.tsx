@@ -9,7 +9,7 @@
 
 'use client';
 
-import React, { useReducer, useCallback } from 'react';
+import React, { useReducer, useCallback, useRef, useState } from 'react';
 import FieldRenderer from './FieldRenderer';
 import Button from '@/components/ui/Button';
 import type { FormFieldDefinition } from '@/utils/types';
@@ -34,12 +34,12 @@ function formReducer(state: FormState, action: FormAction): FormState {
       return {
         ...state,
         values: { ...state.values, [action.name]: action.value },
-        touched: new Set([...state.touched, action.name]),
+        touched: new Set<string>([...state.touched, action.name]),
       };
     case 'SET_ERRORS':
       return { ...state, errors: action.errors };
     case 'TOUCH_FIELD':
-      return { ...state, touched: new Set([...state.touched, action.name]) };
+      return { ...state, touched: new Set<string>([...state.touched, action.name]) };
     case 'RESET':
       return { values: action.initialValues, errors: {}, touched: new Set<string>() };
     default:
@@ -61,7 +61,7 @@ function validateFields(
     // Required check
     if (field.required) {
       if (value === undefined || value === null || value === '') {
-        errors[field.name] = field.errorMessage || `${field.label} is required`;
+        errors[field.name] = `${field.label} is required`;
         continue;
       }
     }
@@ -126,6 +126,9 @@ export default function SchemaForm({
   submitLabel = 'Continue to Review',
   isSubmitting = false,
 }: SchemaFormProps) {
+  const formRef = useRef<HTMLFormElement>(null);
+  const [validationSummary, setValidationSummary] = useState<string[]>([]);
+
   const [state, dispatch] = useReducer(formReducer, {
     values: { ...initialValues },
     errors: {},
@@ -143,13 +146,35 @@ export default function SchemaForm({
     const errors = validateFields(fields, state.values);
     dispatch({ type: 'SET_ERRORS', errors });
 
-    if (Object.keys(errors).length === 0) {
+    const errorMessages = Object.values(errors);
+
+    if (errorMessages.length > 0) {
+      // Show validation summary and scroll to top of form
+      setValidationSummary(errorMessages);
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      setValidationSummary([]);
       onSubmit(state.values);
     }
   };
 
   return (
-    <form className="schema-form" onSubmit={handleSubmit} noValidate>
+    <form ref={formRef} className="schema-form" onSubmit={handleSubmit} noValidate>
+      {/* Validation Error Summary */}
+      {validationSummary.length > 0 && (
+        <div className="schema-form__error-summary" role="alert">
+          <div className="schema-form__error-summary-header">
+            <span className="schema-form__error-summary-icon">⚠</span>
+            <strong>Please fix {validationSummary.length} error{validationSummary.length > 1 ? 's' : ''} before continuing:</strong>
+          </div>
+          <ul className="schema-form__error-summary-list">
+            {validationSummary.map((msg, i) => (
+              <li key={i}>{msg}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className="schema-form__fields">
         {fields.map((field) => (
           <FieldRenderer

@@ -512,6 +512,56 @@ a:hover {
   justify-content: flex-end;
 }
 
+/* Validation Error Summary */
+.schema-form__error-summary {
+  background: var(--color-error-soft);
+  border: 1px solid var(--color-border-error);
+  border-left: 4px solid var(--color-error);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-6);
+  animation: fadeIn 0.3s ease;
+}
+
+.schema-form__error-summary-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-error);
+  font-size: var(--text-sm);
+  margin-bottom: var(--space-3);
+}
+
+.schema-form__error-summary-icon {
+  font-size: var(--text-lg);
+}
+
+.schema-form__error-summary-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.schema-form__error-summary-list li {
+  font-size: var(--text-xs);
+  color: var(--color-error);
+  padding: var(--space-1) 0;
+  padding-left: var(--space-4);
+  position: relative;
+}
+
+.schema-form__error-summary-list li::before {
+  content: '•';
+  position: absolute;
+  left: var(--space-1);
+  color: var(--color-error);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .form-field {
   display: flex;
   flex-direction: column;

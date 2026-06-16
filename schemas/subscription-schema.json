@@ -299,7 +299,7 @@
                                                 "type": "string",
                                                 "minLength": 2,
                                                 "pattern": "^(?![.-])[A-Za-z0-9.-]+(?<![.-])$",
-                                                "errorMessage": "Gateway name should be minimum of 2 characters and can only contain alphanumeric characters, "-", ".", and ""; and cannot begin with "",".","-" or end with "." or "-""
+                                                "errorMessage": "Gateway name should be minimum of 2 characters and can only contain alphanumeric characters, '-', '.', and '_'; and cannot begin with '_','.','-' or end with '.' or '-'"
                                             },
                                             "gateway_type": {
                                                 "type": "string",
@@ -348,7 +348,7 @@
                         "$ref": "#/$defs/resourceProviders"
                     }
                 },
-                "errorMessage": "Missing required field for Subscription. "location", "subscriptionName", "subscriptionAliasName", "managementGroupName" are required field for Subscription"
+                "errorMessage": "Missing required field for Subscription. 'location', 'subscriptionName', 'subscriptionAliasName', 'managementGroupName' are required field for Subscription"
             }
         },
         "resourceProviders": {
