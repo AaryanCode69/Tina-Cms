@@ -21,6 +21,7 @@ import {
 } from '@/utils/types';
 import type { FormFieldDefinition, SubmissionResult } from '@/utils/types';
 import { generateSubscriptionJson } from '@/lib/json/generator';
+import { sanitizeFormData } from '@/lib/json/sanitizer';
 
 interface SubscriptionFormClientProps {
   fields: FormFieldDefinition[];
@@ -70,7 +71,7 @@ export default function SubscriptionFormClient({ fields }: SubscriptionFormClien
         body: JSON.stringify({
           resourceType: SchemaResourceType.Subscription,
           name: subscriptionName,
-          data: formData,
+          data: sanitizeFormData(formData),
         }),
       });
 
