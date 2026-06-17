@@ -18,17 +18,5 @@ export default function NewSubscriptionPage() {
   const schema = getSchema(SchemaResourceType.Subscription);
   const fields = parseSubscriptionFields(schema);
 
-  // Filter to subscription-level fields only (MVP scope)
-  // Exclude: resourceGroups, roleAssignments, userGroups, resourceProviders, arcGateways
-  const MVP_EXCLUDED_FIELDS = new Set([
-    'resourceGroups',
-    'roleAssignments',
-    'userGroups',
-    'resourceProviders',
-    'arcGateways',
-  ]);
-
-  const mvpFields = fields.filter((f) => !MVP_EXCLUDED_FIELDS.has(f.name));
-
-  return <SubscriptionFormClient fields={mvpFields} />;
+  return <SubscriptionFormClient fields={fields} />;
 }

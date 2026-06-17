@@ -22,7 +22,7 @@ export const CONTENT_DIR_MAP: Record<SchemaResourceType, string> = {
 // ── Form Field Definitions ──────────────────────────────────
 
 /** Primitive field types supported by the form renderer */
-export type FieldType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'select' | 'null';
+export type FieldType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'select' | 'dictionary' | 'null';
 
 /** A single form field definition, derived from JSON Schema parsing */
 export interface FormFieldDefinition {
@@ -48,6 +48,8 @@ export interface FormFieldDefinition {
   children?: FormFieldDefinition[];
   /** Item field definition (for array type) */
   itemDefinition?: FormFieldDefinition;
+  /** Value definition for dictionary types */
+  dictionaryValueDefinition?: FormFieldDefinition;
   /** anyOf constraint descriptions */
   anyOfConstraints?: AnyOfConstraint[];
   /** Whether this field accepts null (anyOf with null) */

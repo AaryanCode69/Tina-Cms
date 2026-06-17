@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { Metadata } from "next";
 import "./globals.css";
 
@@ -23,14 +24,14 @@ export default function RootLayout({
       <body>
         <header className="app-header">
           <div className="app-header__inner">
-            <a href="/" className="app-header__logo">
+            <Link href="/" className="app-header__logo">
               <span className="app-header__logo-icon">⬡</span>
               <span className="app-header__logo-text">Terraform Config Builder</span>
-            </a>
+            </Link>
             <nav className="app-header__nav">
-              <a href="/subscriptions/new" className="app-header__link">
+              <Link href="/subscriptions/new" className="app-header__link">
                 Create Subscription
-              </a>
+              </Link>
             </nav>
           </div>
         </header>

@@ -12,6 +12,7 @@ import TextField from './fields/TextField';
 import SelectField from './fields/SelectField';
 import ArrayField from './fields/ArrayField';
 import ObjectField from './fields/ObjectField';
+import DictionaryField from './fields/DictionaryField';
 import type { FormFieldDefinition } from '@/utils/types';
 
 interface FieldRendererProps {
@@ -76,13 +77,30 @@ export default function FieldRenderer({
         </ObjectField>
       );
 
+    case 'dictionary':
+      if (field.dictionaryValueDefinition) {
+        return (
+          <DictionaryField
+            name={field.name}
+            label={field.label}
+            value={(value as Record<string, unknown>) || {}}
+            valueDefinition={field.dictionaryValueDefinition}
+            onChange={onChange}
+            error={fieldError}
+            errors={errors}
+            description={field.description}
+          />
+        );
+      }
+      return null;
+
     case 'array':
       if (field.itemDefinition) {
         return (
           <ArrayField
             name={field.name}
             label={field.label}
-            items={(value as Record<string, unknown>[]) || []}
+            items={(value as unknown[]) || []}
             itemDefinition={field.itemDefinition}
             onChange={onChange}
             error={fieldError}
@@ -91,21 +109,7 @@ export default function FieldRenderer({
           />
         );
       }
-      // Fallback for arrays without item definitions (simple string arrays)
-      return (
-        <TextField
-          name={field.name}
-          label={`${field.label} (comma-separated)`}
-          value={Array.isArray(value) ? (value as string[]).join(', ') : ''}
-          onChange={(name, val) => {
-            const arr = val.split(',').map((s) => s.trim()).filter(Boolean);
-            onChange(name, arr);
-          }}
-          required={field.required}
-          error={fieldError}
-          description={field.description}
-        />
-      );
+      return null;
 
     default:
       return (

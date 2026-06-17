@@ -151,6 +151,62 @@ export function parseSchemaToFields(
         resolved.required || []
       );
       field.anyOfConstraints = extractAnyOfConstraints(resolved);
+    } else if (type === 'object' && typeof resolved.additionalProperties === 'object') {
+      field.type = 'dictionary';
+      
+      let dictSchema = resolved.additionalProperties as JSONSchema;
+      if (dictSchema.$ref) {
+        dictSchema = resolveRef(dictSchema.$ref, rootSchema);
+      }
+      
+      const dictValueType = resolveFieldType(dictSchema).type;
+      
+      field.dictionaryValueDefinition = {
+        name: `${key}_value`,
+        label: `${keyToLabel(key)} Value`,
+        type: dictValueType,
+        required: false,
+        description: dictSchema.description,
+        pattern: extractPattern(dictSchema),
+        errorMessage: extractErrorMessage(dictSchema),
+        minLength: dictSchema.minLength,
+        enumValues: dictSchema.enum,
+        nullable: resolveFieldType(dictSchema).nullable,
+      };
+      
+      // If values are objects
+      if (dictValueType === 'object' && dictSchema.properties) {
+        field.dictionaryValueDefinition.children = parseSchemaToFields(
+          dictSchema, rootSchema, dictSchema.required || []
+        );
+        field.dictionaryValueDefinition.anyOfConstraints = extractAnyOfConstraints(dictSchema);
+      }
+      
+      // If values are arrays
+      if (dictValueType === 'array' && dictSchema.items) {
+        let arrayItemSchema = dictSchema.items;
+        if (arrayItemSchema.$ref) {
+          arrayItemSchema = resolveRef(arrayItemSchema.$ref, rootSchema);
+        }
+        
+        const arrayItemType = resolveFieldType(arrayItemSchema).type;
+        
+        field.dictionaryValueDefinition.itemDefinition = {
+          name: `${key}_value_item`,
+          label: `${keyToLabel(key)} Value Item`,
+          type: arrayItemType,
+          required: false,
+          pattern: extractPattern(arrayItemSchema),
+          errorMessage: extractErrorMessage(arrayItemSchema),
+        };
+        
+        if (arrayItemType === 'object' && arrayItemSchema.properties) {
+          field.dictionaryValueDefinition.itemDefinition.children = parseSchemaToFields(
+            arrayItemSchema, rootSchema, arrayItemSchema.required || []
+          );
+          field.dictionaryValueDefinition.itemDefinition.anyOfConstraints = extractAnyOfConstraints(arrayItemSchema);
+        }
+      }
     }
 
     // Handle arrays
@@ -167,6 +223,11 @@ export function parseSchemaToFields(
         label: `${keyToLabel(key)} Item`,
         type: itemType,
         required: false,
+        pattern: extractPattern(itemSchema),
+        errorMessage: extractErrorMessage(itemSchema),
+        minLength: itemSchema.minLength,
+        enumValues: itemSchema.enum,
+        nullable: resolveFieldType(itemSchema).nullable,
       };
 
       // If array items are objects, parse their properties
