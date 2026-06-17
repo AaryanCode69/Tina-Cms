@@ -139,8 +139,8 @@ export default function SchemaForm({
     dispatch({ type: 'SET_VALUE', name, value });
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e?: React.FormEvent | React.MouseEvent) => {
+    if (e) e.preventDefault();
 
     // Run validation
     const errors = validateFields(fields, state.values);
@@ -188,7 +188,7 @@ export default function SchemaForm({
       </div>
 
       <div className="schema-form__actions">
-        <Button type="submit" variant="primary" size="lg" isLoading={isSubmitting}>
+        <Button type="button" onClick={handleSubmit} variant="primary" size="lg" isLoading={isSubmitting}>
           {submitLabel}
         </Button>
       </div>

@@ -20,33 +20,7 @@ export default function HomePage() {
             </Link>
           </div>
         </div>
-
-        <div className="hero__features">
-          <div className="feature-card">
-            <div className="feature-card__icon">📋</div>
-            <h3 className="feature-card__title">Form-Driven</h3>
-            <p className="feature-card__desc">
-              Fill out guided forms instead of editing raw JSON files.
-            </p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-card__icon">✓</div>
-            <h3 className="feature-card__title">Schema Validated</h3>
-            <p className="feature-card__desc">
-              Every configuration is validated against the JSON Schema before submission.
-            </p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-card__icon">⎇</div>
-            <h3 className="feature-card__title">Git Integrated</h3>
-            <p className="feature-card__desc">
-              Automatically creates a branch, commits the file, and opens a Pull Request.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="resource-types">
+      </section>      <section className="resource-types">
         <h2 className="resource-types__title">Available Resource Types</h2>
         <div className="resource-types__grid">
           <Link href="/subscriptions/new" className="resource-type-card resource-type-card--active">

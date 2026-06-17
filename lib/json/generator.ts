@@ -5,22 +5,18 @@
  * 2-space indentation.
  * ============================================================ */
 
-import { sanitizeFormData } from './sanitizer';
-
 /**
  * Generates a formatted JSON string for a single subscription.
  * Wraps the subscription data in the required { subscriptions: [...] } envelope.
  *
- * @param formData — Raw form data from the subscription form
+ * @param formData — Sanitized form data from the subscription form
  * @returns — Pretty-printed JSON string ready for file output
  */
 export function generateSubscriptionJson(
   formData: Record<string, unknown>
 ): string {
-  const sanitized = sanitizeFormData(formData);
-
   const output = {
-    subscriptions: [sanitized],
+    subscriptions: [formData],
   };
 
   return JSON.stringify(output, null, 2);

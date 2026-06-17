@@ -67,12 +67,13 @@ export default function FieldRenderer({
           name={field.name}
           label={field.label}
           value={(value as Record<string, unknown>) || {}}
-          children={field.children || []}
           onChange={onChange}
           error={fieldError}
           errors={errors}
           description={field.description}
-        />
+        >
+          {field.children || []}
+        </ObjectField>
       );
 
     case 'array':

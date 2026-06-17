@@ -16,38 +16,38 @@
 }
 
 :root {
-  /* Colors — Dark theme inspired by modern dev tools */
-  --color-bg: #0a0e1a;
-  --color-bg-elevated: #111827;
-  --color-bg-surface: #1a2236;
-  --color-bg-hover: #1e293b;
-  --color-bg-input: #0f172a;
+  /* Colors — Minimalist light theme (Beige, Pink, Teal) */
+  --color-bg: #faf8f5;
+  --color-bg-elevated: #ffffff;
+  --color-bg-surface: #ffffff;
+  --color-bg-hover: #f3f0ea;
+  --color-bg-input: #ffffff;
 
-  --color-border: #1e293b;
-  --color-border-focus: #6366f1;
+  --color-border: #e6e2d8;
+  --color-border-focus: #e59fb6;
   --color-border-error: #ef4444;
-  --color-border-success: #22c55e;
+  --color-border-success: #75a8a1;
 
-  --color-text: #e2e8f0;
-  --color-text-secondary: #94a3b8;
-  --color-text-muted: #64748b;
-  --color-text-inverse: #0f172a;
+  --color-text: #2c2c2c;
+  --color-text-secondary: #6e6e6e;
+  --color-text-muted: #969696;
+  --color-text-inverse: #ffffff;
 
-  --color-primary: #6366f1;
-  --color-primary-hover: #818cf8;
-  --color-primary-glow: rgba(99, 102, 241, 0.15);
-  --color-primary-soft: rgba(99, 102, 241, 0.08);
+  --color-primary: #e59fb6;
+  --color-primary-hover: #d68ca4;
+  --color-primary-glow: rgba(229, 159, 182, 0.2);
+  --color-primary-soft: rgba(229, 159, 182, 0.1);
 
-  --color-success: #22c55e;
-  --color-success-soft: rgba(34, 197, 94, 0.1);
+  --color-success: #75a8a1;
+  --color-success-soft: rgba(117, 168, 161, 0.15);
   --color-error: #ef4444;
   --color-error-soft: rgba(239, 68, 68, 0.1);
   --color-warning: #f59e0b;
   --color-warning-soft: rgba(245, 158, 11, 0.1);
-  --color-info: #3b82f6;
-  --color-info-soft: rgba(59, 130, 246, 0.1);
+  --color-info: #75a8a1;
+  --color-info-soft: rgba(117, 168, 161, 0.15);
 
-  --color-accent-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
+  --color-accent-gradient: linear-gradient(135deg, #e59fb6 0%, #d68ca4 50%, #c47992 100%);
 
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;

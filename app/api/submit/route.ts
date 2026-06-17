@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateSubscription } from '@/lib/schema/validator';
 import { generateSubscriptionJson, generateFilePath } from '@/lib/json/generator';
+import { sanitizeFormData } from '@/lib/json/sanitizer';
 import { submitToGitHub } from '@/lib/github/operations';
 import { SchemaResourceType } from '@/utils/types';
 import type { SubmitPayload } from '@/utils/types';
@@ -31,8 +32,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Sanitize once — use the same data for validation and generation
+    const sanitized = sanitizeFormData(body.data);
+
     // Server-side validation (defense in depth)
-    const validation = validateSubscription(body.data);
+    const validation = validateSubscription(sanitized);
     if (!validation.valid) {
       return NextResponse.json(
         { error: 'Validation failed', details: validation.errors },
@@ -40,8 +44,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate JSON
-    const jsonContent = generateSubscriptionJson(body.data);
+    // Generate JSON from the same sanitized data
+    const jsonContent = generateSubscriptionJson(sanitized);
     const filePath = generateFilePath(body.name);
 
     // Submit to GitHub
