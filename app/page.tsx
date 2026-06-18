@@ -20,7 +20,9 @@ export default function HomePage() {
             </Link>
           </div>
         </div>
-      </section>      <section className="resource-types">
+      </section>
+
+      <section className="resource-types">
         <h2 className="resource-types__title">Available Resource Types</h2>
         <div className="resource-types__grid">
           <Link href="/subscriptions/new" className="resource-type-card resource-type-card--active">
